@@ -33,9 +33,8 @@ $callComments = array();
 $refferedComments = array();
 $signatureComments = array();
 $miscComments = array();
-$expectedShipDates = array();
 
-// loop over each comment and print to webpage
+// loop over each comment and push to appropriate array
 while ($row = $res->fetch_assoc()) {
     $upperComment = strtoupper($row['comments']);
     $origComment = $row['comments'];
