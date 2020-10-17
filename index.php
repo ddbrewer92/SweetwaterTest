@@ -22,7 +22,6 @@ $signatureComments = array();
 $miscComments = array();
 
 // loop over each comment and print to webpage
-echo "Comments from DB<br>";
 while ($row = $res->fetch_assoc()) {
     $upperComment = strtoupper($row['comments']);
     $origComment = $row['comments'];
@@ -44,10 +43,20 @@ while ($row = $res->fetch_assoc()) {
     }
 }
 
-// testing what is actually in the array
-foreach ($miscComments as $miscComment) {
-    echo "comment: $miscComment<br>";
+function createUnorderedList($sectionTitle, $contentsArray) {
+  echo "<h2>$sectionTitle</h2>";
+  echo "<ul>";
+  foreach ($contentsArray as $content) {
+    echo "<li>$content</li>";
   }
+  echo "</ul><br>";
+}
+
+createUnorderedList("Candy Comments", $candyComments);
+createUnorderedList("Call Comments", $callComments);
+createUnorderedList("Referral Comments", $refferedComments);
+createUnorderedList("Signature Comments", $signatureComments);
+createUnorderedList("Misc Comments", $miscComments);
 
 $conn->close();
-?> 
+?>
