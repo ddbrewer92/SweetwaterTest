@@ -40,16 +40,16 @@ while ($row = $res->fetch_assoc()) {
     $origComment = $row['comments'];
     
     // populate the comment arrays with the appropriate comments
-    if (strpos($upperComment, "CANDY") !== false) {
+    if (preg_match("/(CANDY|TAFFY|SMARTI)/i", $upperComment)) {
       array_push($candyComments, $origComment);
     }
-    else if (strpos($upperComment, " CALL") !== false) {
+    else if (preg_match("/( CALL|COMUNICARSE)/i", $upperComment)) {
       array_push($callComments, $origComment);
     }
-    else if (strpos($upperComment, "REFERR") !== false) {
+    else if (preg_match("/(REFERR)/i", $upperComment)) {
       array_push($refferedComments, $origComment);
     }
-    else if (strpos($upperComment, "SIGNATURE") !== false or strpos($upperComment, " SIGN ") !== false) {
+    else if (preg_match("/(SIGNATURE| SIGN)/i", $upperComment)) {
       array_push($signatureComments, $origComment);
     }
     else {
