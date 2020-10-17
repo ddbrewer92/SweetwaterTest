@@ -1,4 +1,16 @@
 <?php
+
+// helper function to cut down on duplication
+function createUnorderedList($sectionTitle, $contentsArray) {
+  echo "<h2>$sectionTitle</h2>";
+  echo "<ul>";
+  foreach ($contentsArray as $content) {
+    echo "<li>$content</li>";
+  }
+  echo "</ul><br>";
+}
+
+// db connection info
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -12,20 +24,23 @@ if ($conn->connect_error) {
 }
 
 // get all comments from db
-$sql = "SELECT comments FROM sweetwater_test";
+$sql = "SELECT orderid, comments FROM sweetwater_test";
 $res = $conn->query($sql);
 
+// array to hold the comments
 $candyComments = array();
 $callComments = array();
 $refferedComments = array();
 $signatureComments = array();
 $miscComments = array();
+$expectedShipDates = array();
 
 // loop over each comment and print to webpage
 while ($row = $res->fetch_assoc()) {
     $upperComment = strtoupper($row['comments']);
     $origComment = $row['comments'];
     
+    // populate the comment arrays with the appropriate comments
     if (strpos($upperComment, "CANDY") !== false) {
       array_push($candyComments, $origComment);
     }
@@ -41,22 +56,28 @@ while ($row = $res->fetch_assoc()) {
     else {
       array_push($miscComments, $origComment);
     }
+
+    // find the expected ship dates and update the database
+    if (strpos($upperComment, "EXPECTED")) {
+      // order id so we know who to update
+      $orderid = $row['orderid'];
+      // find just the expected ship date from the comment and convert it to a date object
+      $startIndex = strpos($origComment, "Expected Ship Date: ") + strlen("Expected Ship Date: ");
+      $date = date('Y-m-d', strtotime(substr($origComment, $startIndex, 8)));
+      
+      // update the order with the expected ship date
+      $updateSql = "UPDATE sweetwater_test SET shipdate_expected='$date' WHERE orderid = $orderid";
+      $conn->query($updateSql);
+    }
 }
 
-function createUnorderedList($sectionTitle, $contentsArray) {
-  echo "<h2>$sectionTitle</h2>";
-  echo "<ul>";
-  foreach ($contentsArray as $content) {
-    echo "<li>$content</li>";
-  }
-  echo "</ul><br>";
-}
-
+// create the unordered lists
 createUnorderedList("Candy Comments", $candyComments);
 createUnorderedList("Call Comments", $callComments);
 createUnorderedList("Referral Comments", $refferedComments);
 createUnorderedList("Signature Comments", $signatureComments);
 createUnorderedList("Misc Comments", $miscComments);
 
+// clean up
 $conn->close();
 ?>
