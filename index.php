@@ -30,7 +30,7 @@ while ($row = $res->fetch_assoc()) {
     if (strpos($upperComment, "CANDY") !== false) {
       array_push($candyComments, $origComment);
     }
-    else if (strpos($upperComment, "CALL") !== false) {
+    else if (strpos($upperComment, " CALL") !== false) {
       array_push($callComments, $origComment);
     }
     else if (strpos($upperComment, "REFERR") !== false) {
